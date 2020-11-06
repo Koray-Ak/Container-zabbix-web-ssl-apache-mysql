@@ -1,0 +1,76 @@
+version: '3.1'
+
+networks:
+  network-zabbix:
+    driver: bridge
+
+services:
+  mysql:
+    container_name: mysql
+    image: mysql:5.7
+    command:
+      - mysql
+      - --character-ser-server=utf8
+      - --collation-server=utf8 bin
+    networks:
+      - network-zabbix
+    ports:
+      - '3306:3306'
+    volumes:
+      - './zabbix/mysql:/var/lib/data'
+    environment:
+      - MYSQL_ROOT_PASSWORD=carryontech
+      - MYSQL_DATABASE=zabbix
+      - MYSQL_USER=zabbix
+      - MYSQL_PASSWORD=carryontech
+
+  zabbix-server:
+    container_name: zabbix-server
+    image: zabbix/zabbix-server-mysql:ubuntu-5.0.1
+    networks:
+      - network-zabbix
+    links:
+      - mysql
+    restart: always
+    ports:
+      - '10051:10051'
+    volumes:
+      - './zabbix/alertscripts:/usr/lib/zabbix/alertscripts'
+      - './zabbix/externalscripts:/usr/lib/zabbix/externalscripts'
+      - './zabbix/modules:/var/lib/zabbix/modules'
+      - './zabbix/enc:/var/lib/zabbix/enc'
+      - './zabbix/ssh_keys:/var/lib/zabbix/ssh_keys'
+      - './zabbix/ssl/certs:/var/lib/zabbix/ssl/certs'
+      - './zabbix/ssl/keys:/var/lib/zabbix/ssl/keys'
+      - './zabbix/ssl_ca:/var/lib/zabbix/ssl/ssl_ca'
+      - './zabbix/snmptraps:/var/lib/zabbix/snmptraps'
+    environment:
+      - DB_SERVER_HOST=mysql
+      - MYSQL_DATABASE=zabbix
+      - MYSQL_USER=zabbix
+      - MYSQL_PASSWORD=carryontech
+    depends_on:
+      - mysql
+
+  zabbix-frontend:
+    container_name: zabbix-frontend
+    image: zabbix/zabbix-web-apache-mysql:ubuntu-5.0.1
+    networks:
+      - network-zabbix
+    links:
+      - mysql
+    restart: always
+    ports:
+      - '80:8080'
+      - '443:8443'
+    environment:
+      - DB_SERVER_HOST=mysql
+      - MYSQL_DATABASE=zabbix
+      - MYSQL_USER=zabbix
+      - MYSQL_PASSWORD=carryontech
+      - PHP_TZ=America/Sao_Paulo
+    volumes:
+      - './zabbix/ssl/keys:/etc/ssl/apache2/ssl.crt'
+      - './zabbix/ssl_ca:/etc/ssl/apache2/ssl.key'
+    depends_on:
+      - mysql
