@@ -9,9 +9,6 @@ services:
     container_name: mysql
     image: mysql:5.7
     command:
-      - mysql
-      - --character-ser-server=utf8
-      - --collation-server=utf8 bin
     networks:
       - network-zabbix
     ports:
@@ -19,10 +16,10 @@ services:
     volumes:
       - './zabbix/mysql:/var/lib/data'
     environment:
-      - MYSQL_ROOT_PASSWORD=carryontech
+      - MYSQL_ROOT_PASSWORD=some_password
       - MYSQL_DATABASE=zabbix
       - MYSQL_USER=zabbix
-      - MYSQL_PASSWORD=carryontech
+      - MYSQL_PASSWORD=some_password
 
   zabbix-server:
     container_name: zabbix-server
@@ -48,7 +45,7 @@ services:
       - DB_SERVER_HOST=mysql
       - MYSQL_DATABASE=zabbix
       - MYSQL_USER=zabbix
-      - MYSQL_PASSWORD=carryontech
+      - MYSQL_PASSWORD=some_password
     depends_on:
       - mysql
 
@@ -67,8 +64,8 @@ services:
       - DB_SERVER_HOST=mysql
       - MYSQL_DATABASE=zabbix
       - MYSQL_USER=zabbix
-      - MYSQL_PASSWORD=carryontech
-      - PHP_TZ=America/Sao_Paulo
+      - MYSQL_PASSWORD=some_password
+      - PHP_TZ=Europe/Berlin
     volumes:
       - './zabbix/ssl/keys:/etc/ssl/apache2/ssl.crt'
       - './zabbix/ssl_ca:/etc/ssl/apache2/ssl.key'
