@@ -8,7 +8,6 @@ services:
   mysql:
     container_name: mysql
     image: mysql:5.7
-    command:
     networks:
       - network-zabbix
     ports:
@@ -16,10 +15,10 @@ services:
     volumes:
       - './zabbix/mysql:/var/lib/data'
     environment:
-      - MYSQL_ROOT_PASSWORD=some_password
+      - MYSQL_ROOT_PASSWORD=Password123
       - MYSQL_DATABASE=zabbix
       - MYSQL_USER=zabbix
-      - MYSQL_PASSWORD=some_password
+      - MYSQL_PASSWORD=Password123
 
   zabbix-server:
     container_name: zabbix-server
@@ -45,7 +44,7 @@ services:
       - DB_SERVER_HOST=mysql
       - MYSQL_DATABASE=zabbix
       - MYSQL_USER=zabbix
-      - MYSQL_PASSWORD=some_password
+      - MYSQL_PASSWORD=Password123
     depends_on:
       - mysql
 
@@ -64,10 +63,10 @@ services:
       - DB_SERVER_HOST=mysql
       - MYSQL_DATABASE=zabbix
       - MYSQL_USER=zabbix
-      - MYSQL_PASSWORD=some_password
+      - MYSQL_PASSWORD=Password123
       - PHP_TZ=Europe/Berlin
     volumes:
       - './zabbix/ssl/keys:/etc/ssl/apache2/ssl.crt'
       - './zabbix/ssl_ca:/etc/ssl/apache2/ssl.key'
     depends_on:
-      - mysql
+      - mysql    
