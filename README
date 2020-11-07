@@ -1,0 +1,6 @@
+# Zabbix - Apache - Mysql with SSL
+
+	git pull
+
+	docker-compose up
+
